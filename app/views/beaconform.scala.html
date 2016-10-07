@@ -1,0 +1,13 @@
+<H1>Attendance Form</H1>
+
+<form action="@routes.BeaconController.postAttendance" method="post">
+	Device ID:<br>
+	<input type="text" name="deviceID"><br>
+	UUID:<br>
+	<input type="text" name="beaconID"><br>
+	OS:<br>
+	<input type="text" name="os"><br>
+	Timestamp (12/30/2016):<br>
+	<input type="text" name="timestamp"><br>
+	<button type="submit">Add</button>
+</form>

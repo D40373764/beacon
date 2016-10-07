@@ -9,5 +9,15 @@ GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
+#GET 	/showattendanceform			controllers.AttendanceController.showAttendanceForm
+GET 	/showForm					controllers.BeaconController.showAttendanceForm
+
+#POST 	/postattendance				controllers.AttendanceController.postAttendance
+POST 	/attendee					controllers.BeaconController.postAttendance
+
+#GET 	/getattendances				controllers.AttendanceController.getAttendances
+GET 	/attendees					controllers.BeaconController.getAttendances
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
