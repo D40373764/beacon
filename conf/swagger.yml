@@ -1,0 +1,86 @@
+swagger: "2.0"
+
+info:
+  version: 0.0.1
+  title: Beacon API
+  description: Beacon API to save and retrieve attendee information
+
+schemes:
+- http
+host: localhost:9000
+basePath: /
+
+paths:
+  /attendees:
+    get:
+      description: Return all attendees.
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Json Array
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Attendee'
+  /attendee:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          description: An attendee data to be saved
+          in: body
+          required: true
+          schema:
+            type: object
+            $ref: '#/definitions/Attendee'
+      description: Insert an attendee
+      responses:
+        200:
+          description: Attendee is saved successfully
+          schema:
+            type: string
+          examples:
+            application/json: |-
+              {
+                "response": "success"
+              }
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Success:
+    required:
+      - response
+    properties:
+      response:
+        type: string
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  Attendee:
+    type: object
+    required:
+      - beaconID
+      - deviceID
+      - timestamp
+    properties:
+      beaconID:
+        type: string
+      deviceID:
+        type: string
+      os:
+        type: string
+      timestamp:
+        type: string

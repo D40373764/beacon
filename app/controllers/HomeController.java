@@ -1,8 +1,7 @@
 package controllers;
 
-import play.mvc.*;
-
-import views.html.*;
+import play.mvc.Controller;
+import play.mvc.Result;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -17,7 +16,7 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
     public Result index() {
-        return ok(index.render("Your new application is ready."));
+    	return redirect("/docs/swagger-ui/index.html?url=/assets/swagger.json");
     }
 
 }
