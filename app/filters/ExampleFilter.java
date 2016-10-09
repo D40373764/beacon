@@ -37,7 +37,7 @@ public class ExampleFilter extends Filter {
         RequestHeader requestHeader) {
 
         return next.apply(requestHeader).thenApplyAsync(
-            result -> result.withHeader("X-ExampleFilter", "foo"),
+            result -> result.withHeader("X-DeVryFilter", "Beacon"),
             exec
         );
     }

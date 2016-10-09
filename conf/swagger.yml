@@ -7,7 +7,6 @@ info:
 
 schemes:
 - http
-host: localhost:9000
 basePath: /
 
 paths:

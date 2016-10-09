@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.databind.JsonNode;
 import akka.actor.ActorSystem;
 import io.netty.util.internal.StringUtil;
-import models.Attendance;
+import models.Attendee;
 import play.Logger;
 import play.data.FormFactory;
 import play.db.Database;
@@ -89,7 +89,7 @@ public class BeaconController extends Controller {
 	public Result postAttendance() {
     	Logger.info("Post attendance");
     	
-    	Attendance attendance = formFactory.form(Attendance.class).bindFromRequest().get();
+    	Attendee attendance = formFactory.form(Attendee.class).bindFromRequest().get();
     	String failure = "";
     	
 		connection = db.getConnection();
@@ -133,14 +133,14 @@ public class BeaconController extends Controller {
 		try {
 			statement = connection.createStatement();
 			rs = statement.executeQuery("SELECT * FROM attendance;");
-			List<Attendance> attendances = new ArrayList<Attendance>();
+			List<Attendee> attendances = new ArrayList<Attendee>();
 
 			while (rs.next()) {
 				System.out.println(rs.getString(1));
 				System.out.println(rs.getString(2));
 				System.out.println(rs.getString(3));
 				System.out.println(rs.getString(4));
-				Attendance attendance = new Attendance();
+				Attendee attendance = new Attendee();
 				attendance.setDeviceID(rs.getString(1));
 				attendance.setBeaconID(rs.getString(2));
 				attendance.setOs(rs.getString(3));

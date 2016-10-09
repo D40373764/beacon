@@ -6,24 +6,17 @@
 ### NoDocs ###
 GET     /                           controllers.HomeController.index
 
-# An example controller showing how to use dependency injection
 ### NoDocs ###
-GET     /count                      controllers.CountController.count
-
-# An example controller showing how to write asynchronous code
-### NoDocs ###
-GET     /message                    controllers.AsyncController.message
+GET 	/attendee-form				controllers.AttendanceController.showAttendanceForm
+POST 	/attendee					controllers.AttendanceController.postAttendance
+GET 	/attendees					controllers.AttendanceController.getAttendances
 
 ### NoDocs ###
-#GET 	/showattendanceform			controllers.AttendanceController.showAttendanceForm
+GET 	/attendee-form-1			controllers.BeaconController.showAttendanceForm
 ### NoDocs ###
-GET 	/showForm					controllers.BeaconController.showAttendanceForm
-
-#POST 	/postattendance				controllers.AttendanceController.postAttendance
-POST 	/attendee					controllers.BeaconController.postAttendance
-
-#GET 	/getattendances				controllers.AttendanceController.getAttendances
-GET 	/attendees					controllers.BeaconController.getAttendances
+POST 	/attendee-1					controllers.BeaconController.postAttendance
+### NoDocs ###
+GET 	/attendees-1				controllers.BeaconController.getAttendances
 
 # Map static resources from the /public folder to the /assets URL path
 ### NoDocs ###
