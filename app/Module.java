@@ -2,6 +2,8 @@ import java.time.Clock;
 
 import com.google.inject.AbstractModule;
 
+import services.DataStaxUtil;
+
 /**
  * This class is a Guice module that tells Guice how to bind several
  * different types. This Guice module is created when the Play
@@ -18,6 +20,8 @@ public class Module extends AbstractModule {
     public void configure() {
         // Use the system clock as the default implementation of Clock
         bind(Clock.class).toInstance(Clock.systemDefaultZone());
+        
+        bind(DataStaxUtil.class).asEagerSingleton();
     }
 
 }

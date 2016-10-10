@@ -16,7 +16,6 @@ import akka.event.LoggingAdapter;
 import models.Attendee;
 import play.Logger;
 import play.libs.Json;
-import services.CassandraUtil;
 import services.DataStaxUtil;
 
 public class AttendeeActor extends UntypedActor {
@@ -25,20 +24,20 @@ public class AttendeeActor extends UntypedActor {
 
 	public static final String GET_ATTENDEE_LIST = "GET_ATTENDEE_LIST";
 	
-	private Session session = DataStaxUtil.connect();
-	
-	private PreparedStatement insertStatment = 
+	private Session session = DataStaxUtil.getSession();
+	PreparedStatement insertStatment = 
 			session.prepare("INSERT INTO attendee (beacon_id, device_id, date, time, os) values (?,?,?,?,?);");
-	private PreparedStatement selectStatment = 
+	PreparedStatement selectStatment = 
 			session.prepare("SELECT * FROM attendee;");
-	private BoundStatement insertbs = new BoundStatement(insertStatment);
-	private BoundStatement selectbs = new BoundStatement(selectStatment);
+	BoundStatement insertbs = new BoundStatement(insertStatment);
+	BoundStatement selectbs = new BoundStatement(selectStatment);
+	
 
 	public static Props props = Props.create(AttendeeActor.class);
 
 	@Override
 	public void onReceive(Object msg) throws Throwable {
-
+		
 		if (msg instanceof Attendee) {
 			Logger.info("Received: Attendee");
 			Attendee attendee = (Attendee) msg;

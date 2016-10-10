@@ -2,7 +2,7 @@ name := """beacon"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean, SwaggerPlugin)
+lazy val root = (project in file(".")).enablePlugins(PlayJava, SwaggerPlugin)
 
 scalaVersion := "2.11.7"
 
@@ -10,8 +10,7 @@ libraryDependencies ++= Seq(
   javaJdbc,
   cache,
   javaWs,
-  "com.datastax.cassandra" % "cassandra-driver-core" % "3.1.0",
-  "mysql" % "mysql-connector-java" % "5.1.36"
+  "com.datastax.cassandra" % "cassandra-driver-core" % "3.1.0"
 )
 
 sources in (Compile, doc) := Seq.empty

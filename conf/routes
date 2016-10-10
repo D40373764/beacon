@@ -11,12 +11,6 @@ GET 	/attendee-form				controllers.AttendanceController.showAttendanceForm
 POST 	/attendee					controllers.AttendanceController.postAttendance
 GET 	/attendees					controllers.AttendanceController.getAttendances
 
-### NoDocs ###
-GET 	/attendee-form-1			controllers.BeaconController.showAttendanceForm
-### NoDocs ###
-POST 	/attendee-1					controllers.BeaconController.postAttendance
-### NoDocs ###
-GET 	/attendees-1				controllers.BeaconController.getAttendances
 
 # Map static resources from the /public folder to the /assets URL path
 ### NoDocs ###

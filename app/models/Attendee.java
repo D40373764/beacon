@@ -1,5 +1,10 @@
 package models;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import play.libs.Json;
+
+
 public class Attendee {
 	
 	public String beaconID;
@@ -40,4 +45,16 @@ public class Attendee {
 		this.os = os;
 	}
 	
+	public String toString() {
+		return new StringBuilder().append("{\"beaconID\":").append(beaconID). 
+				append(", \"deviceID\":").append(deviceID).
+				append(", \"date\":").append(date).
+				append(", \"timestamp\":").append(timestamp).
+				append(", \"os\":").append(os).
+				append("}").toString();
+	}
+	
+	public JsonNode toJson() {
+		return Json.parse(this.toString());
+	}
 }
