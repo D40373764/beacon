@@ -24,13 +24,13 @@ public class AttendeeActor extends UntypedActor {
 
 	public static final String GET_ATTENDEE_LIST = "GET_ATTENDEE_LIST";
 	
-	private Session session = DataStaxUtil.getSession();
-	PreparedStatement insertStatment = 
+	private static Session session = DataStaxUtil.getSession();
+	private static PreparedStatement insertStatment = 
 			session.prepare("INSERT INTO attendee (beacon_id, device_id, date, time, os) values (?,?,?,?,?);");
-	PreparedStatement selectStatment = 
+	private static PreparedStatement selectStatment = 
 			session.prepare("SELECT * FROM attendee;");
-	BoundStatement insertbs = new BoundStatement(insertStatment);
-	BoundStatement selectbs = new BoundStatement(selectStatment);
+	private static BoundStatement insertbs = new BoundStatement(insertStatment);
+	private static BoundStatement selectbs = new BoundStatement(selectStatment);
 	
 
 	public static Props props = Props.create(AttendeeActor.class);
@@ -50,10 +50,11 @@ public class AttendeeActor extends UntypedActor {
 				attendee.getOs()
 			);
 			
-			session.execute(insertbs);
+			session.execute(insertbs);			
 			sender().tell(Json.newObject().put("response", "success"), self());
 		}
 		else if (msg instanceof String) {
+			Logger.info("Received: " + msg);
 			
 			switch ((String) msg) {
 				case GET_ATTENDEE_LIST:

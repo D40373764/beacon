@@ -10,6 +10,7 @@ import com.datastax.driver.core.Session;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import play.Logger;
 import play.inject.ApplicationLifecycle;
 
 @Singleton
@@ -32,6 +33,8 @@ public class DataStaxUtil {
 		
 		session = cluster.connect(keyspace);
 		
+		Logger.info("DataStaxUtil->DataStaxUtil session=" + session);
+		
 		lifecycle.addStopHook(() -> {
 			session.close();
 			cluster.close();
@@ -40,6 +43,7 @@ public class DataStaxUtil {
 	}
 	
 	public static Session getSession() {
+		Logger.info("DataStaxUtil->getSession session=" + session);
 		
 		return session;		
 	}
