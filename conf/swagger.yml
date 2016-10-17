@@ -30,7 +30,7 @@ paths:
         - application/json
       parameters:
         - name: body
-          description: An attendee data to be saved
+          description: An attendee data to be saved (6FBBEF7C-F92C-471E-8D5C-470E9B367FDB)
           in: body
           required: true
           schema:
@@ -72,11 +72,25 @@ definitions:
     type: object
     required:
       - beaconID
-      - deviceID
+      - attendeeID
       - timestamp
     properties:
       beaconID:
         type: string
+      attendeeID:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      eventID:
+        type: string
+      eventName:
+        type: string
+      placeName:
+        type: string
+      roomName:
+        type: string        
       deviceID:
         type: string
       os:

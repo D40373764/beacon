@@ -7,9 +7,9 @@
 GET     /                           controllers.HomeController.index
 
 ### NoDocs ###
-GET 	/attendee-form				controllers.AttendanceController.showAttendanceForm
-POST 	/attendee					controllers.AttendanceController.postAttendance
-GET 	/attendees					controllers.AttendanceController.getAttendances
+GET 	/attendee-form				controllers.AttendanceController.showAttendeeForm
+POST 	/attendee					controllers.AttendanceController.postAttendee
+GET 	/attendees					controllers.AttendanceController.getAttendees
 
 
 # Map static resources from the /public folder to the /assets URL path
