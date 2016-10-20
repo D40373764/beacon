@@ -25,3 +25,5 @@ EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.ManagedClass
 swaggerDomainNameSpaces := Seq("models")
 
 libraryDependencies += "org.webjars" % "swagger-ui" % "2.2.5"
+
+fork in run := true
