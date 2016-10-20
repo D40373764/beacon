@@ -1,7 +1,5 @@
 package controllers;
 
-import java.util.Date;
-
 import models.Attendee;
 import models.AttendeeIn;
 import models.Event;
@@ -29,8 +27,7 @@ public class AttendanceController extends Controller {
 		RoomLocation room = dataStaxUtil.getLocation(beaconID);
 		Event event = dataStaxUtil.getEvent(eventID);
 		
-		//if ( saveAttendeeByEvent(attendeeIn, event) && saveRoomAttendanceByEvent(attendeeIn, room)) {
-		if ( saveAttendeeByEvent(attendeeIn, event) ) {
+		if ( saveAttendeeByEvent(attendeeIn, event) && saveRoomAttendanceByEvent(attendeeIn, event.getName(), room)) {
 			return ok(Json.newObject().put("response", "success"));	
 		}
 		else {
@@ -88,12 +85,12 @@ public class AttendanceController extends Controller {
 	 *
      * @return
      */
-	public boolean saveRoomAttendanceByEvent(AttendeeIn attendeeIn, RoomLocation room) {
+	public boolean saveRoomAttendanceByEvent(final AttendeeIn attendeeIn, final String eventName, final RoomLocation room) {
 		
 		RoomAttendance roomAttendance = new RoomAttendance();		
 		roomAttendance.setAttendeeID(attendeeIn.getAttendeeID());
 		roomAttendance.setEventID(attendeeIn.getEventID());
-		roomAttendance.setEventName(attendeeIn.getEventName());
+		roomAttendance.setEventName(eventName);
 		roomAttendance.setRoomName(room.getRoomName());
 		roomAttendance.setRoomFloor(room.getRoomFloor());
 		roomAttendance.setLocationName(room.getPlaceName());
@@ -110,10 +107,8 @@ public class AttendanceController extends Controller {
 		
 		if (dataStaxUtil.saveRoomAttendance(roomAttendance)) {
 			return true;
-			//return ok(Json.newObject().put("response", "success"));					
 		} else {
 			return false;
-			//return Controller.badRequest(Json.newObject().put("response", "error"));								
 		}
 	}
 
