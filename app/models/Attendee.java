@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import play.libs.Json;
@@ -16,25 +18,27 @@ import play.libs.Json;
  *
  */
 public class Attendee {
-	public String beaconID;
-	public String attendeeID;
-	public String firstName;
-	public String lastName;
-	public String eventID;
-	public String eventName;
-	public String placeName;
-	public String roomName;
-	public String deviceID;
-	public String date;
-	public String timestamp;
-	public String os;
+	private String eventID;
+	private String attendeeID;
+	private String firstName;
+	private String lastName;
+	private String division;
+	private String department;
+	private String eventName;
+	private String eventAddressL1;
+	private String eventAddressL2;
+	private String eventCity;
+	private String eventState;
+	private String eventZip;
+	private String eventCountry;
+	private String timestamp;	
 	
-	public String getBeaconID() {
-		return beaconID;
+	public String getEventID() {
+		return eventID;
 	}
 
-	public void setBeaconID(String beaconID) {
-		this.beaconID = beaconID;
+	public void setEventID(String eventID) {
+		this.eventID = eventID;
 	}
 
 	public String getAttendeeID() {
@@ -61,13 +65,22 @@ public class Attendee {
 		this.lastName = lastName;
 	}
 
-	public String getEventID() {
-		return eventID;
+	public String getDivision() {
+		return division;
 	}
 
-	public void setEventID(String eventID) {
-		this.eventID = eventID;
+	public void setDivision(String division) {
+		this.division = division;
 	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
 
 	public String getEventName() {
 		return eventName;
@@ -77,36 +90,52 @@ public class Attendee {
 		this.eventName = eventName;
 	}
 
-	public String getPlaceName() {
-		return placeName;
+	public String getEventAddressL1() {
+		return eventAddressL1;
 	}
 
-	public void setPlaceName(String placeName) {
-		this.placeName = placeName;
+	public void setEventAddressL1(String eventAddressL1) {
+		this.eventAddressL1 = eventAddressL1;
 	}
 
-	public String getRoomName() {
-		return roomName;
+	public String getEventAddressL2() {
+		return eventAddressL2;
 	}
 
-	public void setRoomName(String roomName) {
-		this.roomName = roomName;
+	public void setEventAddressL2(String eventAddressL2) {
+		this.eventAddressL2 = eventAddressL2;
 	}
 
-	public String getDeviceID() {
-		return deviceID;
+	public String getEventCity() {
+		return eventCity;
 	}
 
-	public void setDeviceID(String deviceID) {
-		this.deviceID = deviceID;
+	public void setEventCity(String eventCity) {
+		this.eventCity = eventCity;
 	}
 
-	public String getDate() {
-		return date;
+	public String getEventState() {
+		return eventState;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setEventState(String eventState) {
+		this.eventState = eventState;
+	}
+
+	public String getEventZip() {
+		return eventZip;
+	}
+
+	public void setEventZip(String eventZip) {
+		this.eventZip = eventZip;
+	}
+
+	public String getEventCountry() {
+		return eventCountry;
+	}
+
+	public void setEventCountry(String eventCountry) {
+		this.eventCountry = eventCountry;
 	}
 
 	public String getTimestamp() {
@@ -117,21 +146,13 @@ public class Attendee {
 		this.timestamp = timestamp;
 	}
 
-	public String getOs() {
-		return os;
-	}
-
-	public void setOs(String os) {
-		this.os = os;
-	}
-
 	public String toString() {
 		return new StringBuilder().
 				append("{\"attendeeID\":").append(attendeeID). 
-				append(", \"deviceID\":").append(deviceID).
-				append(", \"date\":").append(date).
-				append(", \"timestamp\":").append(timestamp).
-				append(", \"os\":").append(os).
+				append(", \"eventID\":").append(eventID).
+				append(", \"firstName\":").append(firstName).
+				append(", \"lastName\":").append(lastName).
+				append(", \"eventName\":").append(eventName).
 				append("}").toString();
 	}
 	

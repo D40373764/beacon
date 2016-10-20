@@ -10,11 +10,18 @@ schemes:
 basePath: /
 
 paths:
-  /attendees:
+  /attendees/{eventID}:
     get:
-      description: Return all attendees.
+      description: |
+        Return all event records from devry_beacon.room_attendance_by_event table.
       produces:
-      - application/json
+        - application/json
+      parameters:
+        - name: eventID
+          in: path
+          description: 'event id'
+          required: true
+          type: string
       responses:
         200:
           description: Json Array
@@ -35,7 +42,7 @@ paths:
           required: true
           schema:
             type: object
-            $ref: '#/definitions/Attendee'
+            $ref: '#/definitions/AttendeeIn'
       description: Insert an attendee
       responses:
         200:
@@ -70,12 +77,8 @@ definitions:
         type: string
   Attendee:
     type: object
-    required:
-      - beaconID
-      - attendeeID
-      - timestamp
     properties:
-      beaconID:
+      eventID:
         type: string
       attendeeID:
         type: string
@@ -83,17 +86,41 @@ definitions:
         type: string
       lastName:
         type: string
+      eventName:
+        type: string
+      eventAddressL1:
+        type: string
+      eventAddressL2:
+        type: string        
+      eventCity:
+        type: string
+      eventState:
+        type: string
+      eventZip:
+        type: string
+      eventCountry:
+        type: string
+      timestamp:
+        type: string
+  AttendeeIn:
+    type: object
+    required:
+      - attendeeID
+      - beaconID
+      - eventID
+      - eventName
+      - timestamp
+    properties:
+      attendeeID:
+        type: string
+      beaconID:
+        type: string
       eventID:
         type: string
       eventName:
         type: string
-      placeName:
-        type: string
-      roomName:
-        type: string        
-      deviceID:
+      timestamp:
         type: string
       os:
         type: string
-      timestamp:
-        type: string
+      
