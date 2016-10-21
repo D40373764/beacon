@@ -41,7 +41,6 @@ paths:
           in: body
           required: true
           schema:
-            type: object
             $ref: '#/definitions/AttendeeIn'
       description: Insert an attendee
       responses:
