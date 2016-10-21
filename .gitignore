@@ -27,6 +27,7 @@ project/play-fork-run.sbt
 project/sbt-ui.sbt
 target
 .target
+.sbtserver/
 
 # Play
 logs

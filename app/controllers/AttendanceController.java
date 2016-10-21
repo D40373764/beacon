@@ -3,8 +3,12 @@ package controllers;
 import models.Attendee;
 import models.AttendeeIn;
 import models.Event;
+import models.Feedback;
+import models.FeedbackIn;
+import models.Question;
 import models.RoomAttendance;
 import models.RoomLocation;
+import models.User;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -35,11 +39,65 @@ public class AttendanceController extends Controller {
 		}
     }
 
-    public Result getAttendees(String eventID) {
+    public Result getAttendeesByEvent(String eventID) {
 		Logger.info("Get attendance list");
 		return ok(dataStaxUtil.getAllAttendeeByEvent());		
     }
 
+    public Result getQuestionsByEvent(String eventID) {
+		Logger.info("Get question list");
+		return ok(dataStaxUtil.getQuestionsByEvent(eventID));		
+    }
+
+    public Result postFeedback() {
+		FeedbackIn feedbackIn = Json.fromJson(request().body().asJson(), FeedbackIn.class);
+		
+		if (saveFeedback(feedbackIn)) {
+			return ok(Json.newObject().put("response", "success"));	
+		}
+		else {
+			return badRequest(Json.newObject().put("response", "error"));
+		}
+    }
+
+	public boolean saveFeedback(FeedbackIn feedbackIn) {
+
+		String beaconID = feedbackIn.getBeaconID();
+		String eventID = feedbackIn.getEventID();
+		String questionID = feedbackIn.getQuestionID();
+		
+		RoomLocation room = dataStaxUtil.getLocation(beaconID);
+		Event event = dataStaxUtil.getEvent(eventID);
+		User user = dataStaxUtil.getUser(feedbackIn.getAttendeeID());
+		Logger.info("feedbackIn.getAttendeeID()=" + feedbackIn.getAttendeeID());
+		Question question = dataStaxUtil.getQuestion(eventID, questionID);
+
+		Feedback feedback = new Feedback();
+		feedback.setAttendeeID(feedbackIn.getAttendeeID());
+		feedback.setEventID(feedbackIn.getEventID());
+		feedback.setQuestionID(questionID);
+		feedback.setAttendeeAddressL1(room.getAddressL1());
+		feedback.setAttendeeAddressL2(room.getAddressL2());
+		feedback.setAttendeeCity(room.getCity());
+		feedback.setAttendeeState(room.getState());
+		feedback.setAttendeeZip(room.getZip());
+		feedback.setAttendeeCountry(room.getCountry());
+		feedback.setAttendeeFirstName(user.getFirstName());
+		feedback.setAttendeeLastName(user.getLastName());
+		feedback.setEventName(event.getName());
+		feedback.setQuestionText(question.getQuestionText());
+		feedback.setRatingAmount(feedbackIn.getRating());
+		feedback.setRatingComment(feedbackIn.getComment());
+		feedback.setRatingDate(feedbackIn.getTimestamp());
+				
+		if (dataStaxUtil.saveFeedback(feedback)) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
 	public boolean saveAttendeeByEvent(AttendeeIn attendeeIn, Event event) {
 		
 		Attendee attendee = new Attendee();		
@@ -103,8 +161,7 @@ public class AttendanceController extends Controller {
 		roomAttendance.setTimestamp(attendeeIn.getTimestamp());
 		
 		roomAttendance = dataStaxUtil.setUserName(roomAttendance);
-		
-		
+				
 		if (dataStaxUtil.saveRoomAttendance(roomAttendance)) {
 			return true;
 		} else {

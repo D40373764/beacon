@@ -1,8 +1,10 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
@@ -18,8 +20,11 @@ import com.typesafe.config.ConfigFactory;
 
 import models.Attendee;
 import models.Event;
+import models.Feedback;
+import models.Question;
 import models.RoomAttendance;
 import models.RoomLocation;
+import models.User;
 import play.Logger;
 import play.libs.Json;
 
@@ -38,22 +43,30 @@ public class DataStaxUtil {
 	private static String INSERT_ATTENDEE_BY_EVENT = 
 			"insert into attendees_by_event (event_id,attendee_id,attendee_first_name,attendee_last_name,event_address_l1,event_address_l2,event_city,event_country,event_name,event_state,event_zip,registration_timestamp,attendee_organization_level)" + 
 			" values (?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	private static String INSERT_FEEDBACK = 
+			"insert into ratings_by_question_and_user (attendee_id,event_id,question_id,attendee_address_l1,attendee_address_l2,attendee_city,attendee_country,attendee_first_name,attendee_last_name,attendee_state,attendee_zip,event_name,question_text,rating_amount,rating_comment,rating_date)" + 
+			" values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	
 	private static String SELECT_ALL_ROOM_ATTENDANCE_BY_EVENT = "SELECT * FROM attendees_by_event;";
 	private static String SELECT_ALL_ATTENDEE_BY_EVENT = "SELECT * FROM attendees_by_event;";
 	private static String SELECT_USER_BY_DSI = "select first_name, last_name, division, department_name from users where dsi = ?;";
 	private static String SELECT_ALL_BEACON_LOCATION = "SELECT * FROM beacon_location;";
 	private static String SELECT_ALL_EVENT = "SELECT * FROM events;";
+	private static String SELECT_ALL_QUESTIONS_BY_EVENT = "SELECT * FROM questions_by_event;";
 	
 	private static BoundStatement insertRoomAttendanceBS;
 	private static BoundStatement insertAttendeeByEventBS;
+	private static BoundStatement insertFeedbackBS;
 	private static BoundStatement selectAllRoomAttendanceBS;
 	private static BoundStatement selectAllAttendeeByEventBS;
 	private static BoundStatement selectUserByDsiBS;
 	private static BoundStatement selectBeaconLocationBS;
 	private static BoundStatement selectAllEventBS;
+	private static BoundStatement selectAllQuestionsByEventBS;
 	
 	private static HashMap<String, RoomLocation> beaconLocationMap = new HashMap<>();
 	private static HashMap<String, Event> eventMap = new HashMap<>();
+	private static HashMap<String, Question> questionMap = new HashMap<>();
 	
 	public DataStaxUtil() {
 		Logger.info("Construct DataStaxUtil");
@@ -65,22 +78,28 @@ public class DataStaxUtil {
 					.withCredentials(config.getString("datastax.username"), config.getString("datastax.password"))
 					.build();			
 		}
+		
 		if (null == session) {
 			session = cluster.connect(keyspace);			
+
+			insertRoomAttendanceBS = new BoundStatement(session.prepare(INSERT_ATTENDEE));
+			insertAttendeeByEventBS = new BoundStatement(session.prepare(INSERT_ATTENDEE_BY_EVENT));
+			insertFeedbackBS = new BoundStatement(session.prepare(INSERT_FEEDBACK));
+			
+			selectAllRoomAttendanceBS = new BoundStatement(session.prepare(SELECT_ALL_ROOM_ATTENDANCE_BY_EVENT));
+			selectAllAttendeeByEventBS = new BoundStatement(session.prepare(SELECT_ALL_ATTENDEE_BY_EVENT));
+			selectUserByDsiBS = new BoundStatement(session.prepare(SELECT_USER_BY_DSI));
+			selectBeaconLocationBS = new BoundStatement(session.prepare(SELECT_ALL_BEACON_LOCATION));
+			selectAllEventBS = new BoundStatement(session.prepare(SELECT_ALL_EVENT));
+			selectAllQuestionsByEventBS = new BoundStatement(session.prepare(SELECT_ALL_QUESTIONS_BY_EVENT));
+
+			loadBeanLocations();
+			loadEvents();
+			loadQuestions();
 		}
 		
 		Logger.info("DataStaxUtil->DataStaxUtil session=" + session);
-		
-		insertRoomAttendanceBS = new BoundStatement(session.prepare(INSERT_ATTENDEE));
-		insertAttendeeByEventBS = new BoundStatement(session.prepare(INSERT_ATTENDEE_BY_EVENT));
-		selectAllRoomAttendanceBS = new BoundStatement(session.prepare(SELECT_ALL_ROOM_ATTENDANCE_BY_EVENT));
-		selectAllAttendeeByEventBS = new BoundStatement(session.prepare(SELECT_ALL_ATTENDEE_BY_EVENT));
-		selectUserByDsiBS = new BoundStatement(session.prepare(SELECT_USER_BY_DSI));
-		selectBeaconLocationBS = new BoundStatement(session.prepare(SELECT_ALL_BEACON_LOCATION));
-		selectAllEventBS = new BoundStatement(session.prepare(SELECT_ALL_EVENT));
-		
-		loadBeanLocations();
-		loadEvents();
+				
 	}
 	
 	public Session getSession() {
@@ -128,6 +147,23 @@ public class DataStaxUtil {
 		
 		return attendee;
 	}
+
+	public User getUser(String attendeeID) {
+		User user = new User();
+		
+		selectUserByDsiBS.bind(attendeeID);
+		ResultSet results = getSession().execute(selectUserByDsiBS);
+
+		for (Row row : results) {
+			user.setFirstName(row.getString("first_name"));
+			user.setLastName(row.getString("last_name"));
+			user.setDivision(row.getString("division"));
+			user.setDepartment(row.getString("department_name"));
+		}
+		
+		return user;		
+	}
+	
 	
 	public ArrayNode getAllRoomAttendanceByEvent() {
 		ResultSet results = getSession().execute(selectAllRoomAttendanceBS);
@@ -227,12 +263,54 @@ public class DataStaxUtil {
 		return true;
 	}
 
+	public boolean saveFeedback(Feedback feedback) {
+
+		Logger.info("Inside saveFeedback");
+		Logger.info("feedback.getRatingAmount()=" + feedback.getRatingAmount());
+		Logger.info("feedback.getRatingComment()=" + feedback.getRatingComment());
+		Logger.info("feedback.getRatingDate()=" + feedback.getRatingDate());
+		insertFeedbackBS.bind()
+		.setString("attendee_id", feedback.getAttendeeID())
+		.setString("event_id", feedback.getEventID())
+		.setString("question_id", feedback.getQuestionID())
+		.setString("attendee_address_l1", feedback.getAttendeeAddressL1())
+		.setString("attendee_address_l2", feedback.getAttendeeAddressL2())
+		.setString("attendee_city", feedback.getAttendeeCity())
+		.setString("attendee_country", feedback.getAttendeeCountry())
+		.setString("attendee_first_name", feedback.getAttendeeFirstName())
+		.setString("attendee_last_name", feedback.getAttendeeLastName())
+		.setString("attendee_state", feedback.getAttendeeState())
+		.setString("attendee_zip", feedback.getAttendeeZip())
+		.setString("event_name", feedback.getEventName())
+		.setString("question_text", feedback.getQuestionText())
+		.setInt("rating_amount", feedback.getRatingAmount())
+		.setString("rating_comment", feedback.getRatingComment())
+		.setString("rating_date", feedback.getRatingDate());
+				
+		ResultSet results = getSession().execute(insertFeedbackBS);
+		Logger.info("results=" + results.toString());
+		return true;
+	
+	}
+	
 	public RoomLocation getLocation(String beaconID) {
 		return beaconLocationMap.get(beaconID);
 	}
 
 	public Event getEvent(String eventID) {
 		return eventMap.get(eventID);
+	}
+
+	public Question getQuestion(String eventID, String questionID) {
+		return questionMap.get(eventID + questionID);
+	}
+
+	public ArrayNode getQuestionsByEvent(String eventID) {
+		List<Question> questions = questionMap.entrySet().stream()
+                .map(x -> x.getValue())
+                .collect(Collectors.toList());
+		
+		return (ArrayNode) Json.toJson(questions);
 	}
 
 	private void loadBeanLocations() {
@@ -277,5 +355,25 @@ public class DataStaxUtil {
 		}	
 	}
 	
+	/**
+	 * Load questions into a map.
+	 */
+	private void loadQuestions() {
+		
+		ResultSet results = session.execute(selectAllQuestionsByEventBS);
+		
+		for (Row row : results) {
+			String eventID = row.getString("event_id");
+			String questionID = row.getString("question_id");
+			Question question = new Question();
+			question.setEventID(eventID);
+			question.setQuestionID(questionID);
+			question.setEventDate(row.getDate("event_date"));
+			question.setEventName(row.getString("event_name"));
+			question.setQuestionText(row.getString("question_text"));
+			
+			questionMap.put(eventID + questionID, question);
+		}	
+	}
 	
 }

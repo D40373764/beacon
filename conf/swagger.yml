@@ -1,14 +1,13 @@
 swagger: "2.0"
-
 info:
-  version: 0.0.1
+  version: "0.0.1"
   title: Beacon API
   description: Beacon API to save and retrieve attendee information
-
 schemes:
-- http
+  - http
 basePath: /
-
+produces:
+  - application/json
 paths:
   /attendees/{eventID}:
     get:
@@ -41,7 +40,6 @@ paths:
           in: body
           required: true
           schema:
-            type: object
             $ref: '#/definitions/AttendeeIn'
       description: Insert an attendee
       responses:
@@ -58,6 +56,36 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+            
+  /feedback:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          description: Save user feedback
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FeedbackIn'
+      description: Insert a user feedback
+      responses:
+        200:
+          description: Feedback is saved successfully
+          schema:
+            type: string
+          examples:
+            application/json: |-
+              {
+                "response": "success"
+              }
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  
 definitions:
   Success:
     required:
@@ -123,4 +151,28 @@ definitions:
         type: string
       os:
         type: string
-      
+  FeedbackIn:
+    type: object
+    required:
+      - attendeeID
+      - beaconID
+      - eventID
+      - questionID
+      - rating
+      - comment
+      - timestamp
+    properties:
+      attendeeID:
+        type: string
+      beaconID:
+        type: string
+      eventID:
+        type: string
+      questionID:
+        type: string
+      rating:
+        type: number
+      comment:
+        type: string
+      timestamp:
+        type: string 

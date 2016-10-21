@@ -7,8 +7,10 @@
 GET     /                           controllers.HomeController.index
 
 ### NoDocs ###
-GET 	/attendees/:eventID			controllers.AttendanceController.getAttendees(eventID: String)
+GET 	/attendees/:eventID			controllers.AttendanceController.getAttendeesByEvent(eventID: String)
 POST 	/attendee					controllers.AttendanceController.postAttendee
+GET 	/questions/:eventID			controllers.AttendanceController.getQuestionsByEvent(eventID: String)
+POST 	/feedback					controllers.AttendanceController.postFeedback
 
 
 # Map static resources from the /public folder to the /assets URL path
